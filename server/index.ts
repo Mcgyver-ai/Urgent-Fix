@@ -2,6 +2,10 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { db } from "./db";
+import { serviceCategories } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 const app = express();
 const httpServer = createServer(app);
@@ -59,7 +63,26 @@ app.use((req, res, next) => {
   next();
 });
 
+async function seedDatabase() {
+  try {
+    const existingCats = await db.select().from(serviceCategories);
+    if (existingCats.length === 0) {
+      await db.insert(serviceCategories).values([
+        { name: "Plumbing", slug: "plumbing", description: "Burst pipes, blocked drains, leaking toilets", icon: "droplets" },
+        { name: "Electrical", slug: "electrical", description: "Power outages, faulty sockets, wiring issues", icon: "zap" },
+        { name: "Locksmith", slug: "locksmith", description: "Locked out, broken keys, lock replacements", icon: "key" },
+        { name: "Boiler / Heating", slug: "boiler-heating", description: "Boiler repairs, no heating, pressure issues", icon: "flame" },
+      ]);
+      log("Service categories seeded");
+    }
+  } catch (err) {
+    log("Seed error (non-fatal): " + String(err));
+  }
+}
+
 (async () => {
+  await setupAuth(app);
+  registerAuthRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
@@ -96,8 +119,9 @@ app.use((req, res, next) => {
       host: "0.0.0.0",
       reusePort: true,
     },
-    () => {
+    async () => {
       log(`serving on port ${port}`);
+      await seedDatabase();
     },
   );
 })();
