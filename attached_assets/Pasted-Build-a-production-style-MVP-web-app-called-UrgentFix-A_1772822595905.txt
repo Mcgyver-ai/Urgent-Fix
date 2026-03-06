@@ -1,0 +1,486 @@
+Build a production-style MVP web app called “UrgentFix”.
+
+APP SUMMARY
+UrgentFix is an on-demand emergency home repair platform. Customers can request urgent help for plumbing, electrical, locksmith, and boiler/heating issues. Providers can accept jobs, update status, and complete work. Admins can verify providers, monitor bookings, and manage disputes.
+
+GOAL
+Create a clean, modern, mobile-friendly MVP that works end-to-end with:
+1. Customer booking flow
+2. Provider job acceptance flow
+3. Admin verification/management flow
+4. Real-time booking status updates
+5. Stripe-ready payment structure
+6. Clean database structure and scalable code organization
+
+IMPORTANT BUILD RULES
+- Build the app as a working MVP, not a landing page mockup
+- Use clean, modular, scalable code
+- Keep code beginner-readable
+- Add comments only where useful
+- Avoid fake placeholder logic where real logic can be implemented
+- Use deterministic state handling for bookings
+- Use form validation
+- Include error handling for all major actions
+- Make the UI feel like a real startup product
+- Use a professional modern design with strong UX clarity
+- Prioritize mobile-first layout
+- Do not overcomplicate version 1 with unnecessary features
+
+RECOMMENDED STACK
+Use this stack unless Replit suggests a better fully compatible option:
+- Frontend: React + TypeScript + Vite
+- Styling: Tailwind CSS
+- UI components: shadcn/ui style components or equivalent clean component system
+- Backend: Node.js + Express or Replit-compatible server routes
+- Database: PostgreSQL with Prisma ORM
+- Auth: email/password auth with role-based access
+- State: simple React state or lightweight store
+- Realtime: polling or lightweight realtime updates
+- Payments: Stripe-ready integration structure, even if test mode only
+- Maps: leave map integration ready, but do not block MVP if live map key is missing
+
+USER ROLES
+There are 3 user roles:
+1. Customer
+2. Provider
+3. Admin
+
+CORE SERVICE CATEGORIES
+Support these emergency categories:
+- Plumbing
+- Electrical
+- Locksmith
+- Boiler / Heating
+
+BOOKING STATUS MODEL
+Use this exact booking lifecycle:
+- draft
+- requested
+- accepted
+- provider_en_route
+- arrived
+- diagnosing
+- quote_pending
+- quote_approved
+- in_progress
+- completed
+- cancelled
+- disputed
+
+DATA MODEL REQUIREMENTS
+Create database tables/models for:
+- users
+- providers
+- provider_documents
+- service_categories
+- provider_services
+- addresses
+- bookings
+- booking_photos
+- quotes
+- payments
+- reviews
+- disputes
+- notifications
+
+MINIMUM REQUIRED FIELDS
+
+users
+- id
+- full_name
+- email
+- password_hash
+- phone
+- role
+- created_at
+- updated_at
+
+providers
+- id
+- user_id
+- business_name
+- service_radius_km
+- is_verified
+- is_available
+- rating_average
+- jobs_completed
+- created_at
+- updated_at
+
+provider_documents
+- id
+- provider_id
+- document_type
+- document_url
+- verification_status
+- uploaded_at
+
+service_categories
+- id
+- name
+- slug
+
+provider_services
+- id
+- provider_id
+- category_id
+
+addresses
+- id
+- user_id
+- line1
+- line2
+- city
+- postcode
+- lat
+- lng
+- created_at
+
+bookings
+- id
+- customer_id
+- provider_id
+- category_id
+- issue_type
+- description
+- urgency
+- address_id
+- status
+- scheduled_at
+- accepted_at
+- arrived_at
+- completed_at
+- callout_fee
+- quoted_total
+- final_total
+- payment_status
+- created_at
+- updated_at
+
+booking_photos
+- id
+- booking_id
+- photo_url
+- uploaded_at
+
+quotes
+- id
+- booking_id
+- provider_id
+- labour_amount
+- parts_amount
+- total_amount
+- notes
+- approved_by_customer
+- created_at
+
+payments
+- id
+- booking_id
+- stripe_payment_intent_id
+- amount
+- currency
+- status
+- created_at
+
+reviews
+- id
+- booking_id
+- customer_id
+- provider_id
+- rating
+- comment
+- created_at
+
+disputes
+- id
+- booking_id
+- opened_by_user_id
+- reason
+- status
+- resolution_notes
+- created_at
+- updated_at
+
+notifications
+- id
+- user_id
+- type
+- title
+- message
+- is_read
+- created_at
+
+AUTH + ACCESS RULES
+Implement role-based permissions:
+- Customers can create and view only their own bookings
+- Providers can view only bookings assigned to them or available to them
+- Admin can view and manage everything
+- Providers cannot mark themselves verified
+- Customers cannot access admin/provider management pages
+- Admin can verify/suspend providers
+
+CUSTOMER FEATURES
+Build these screens and flows:
+
+1. Customer Auth
+- Sign up
+- Sign in
+- Sign out
+
+2. Customer Dashboard
+- Quick “Request Urgent Help” CTA
+- View active jobs
+- View booking history
+
+3. New Booking Flow
+Step 1:
+- Select service category
+Step 2:
+- Select issue type
+- Example issue types:
+  - Plumbing: burst pipe, blocked drain, leaking toilet, no hot water
+  - Electrical: power outage, tripping fuse, faulty socket, urgent lighting issue
+  - Locksmith: locked out, broken key, lock failure
+  - Boiler/Heating: boiler not starting, no heating, no hot water, pressure issue
+Step 3:
+- Enter address
+- Add description
+- Upload up to 3 photos
+Step 4:
+- Select urgency:
+  - ASAP
+  - Today
+  - Scheduled
+Step 5:
+- Show available providers ranked by distance, ETA, rating
+Step 6:
+- Show estimated callout fee
+- Confirm request
+Step 7:
+- Booking confirmation page
+
+4. Booking Detail Screen
+- Show provider details
+- Show timeline/status
+- Show quote if submitted
+- Approve quote button
+- Mark job complete button
+- Open dispute button
+
+5. Reviews
+- Leave rating and review after completion
+
+PROVIDER FEATURES
+Build these screens and flows:
+
+1. Provider Auth
+- Sign up
+- Sign in
+
+2. Provider Onboarding
+- Business name
+- Service radius
+- Categories served
+- Upload verification documents
+- Set availability status
+
+3. Provider Dashboard
+- Available jobs
+- Accepted jobs
+- Completed jobs
+- Earnings summary placeholder
+
+4. Job Acceptance Flow
+- Provider can see jobs matching their categories/radius
+- Accept job
+- Once accepted, booking status changes from requested to accepted
+- Assign provider_id
+
+5. Provider Booking Detail
+- View customer issue
+- View address
+- View photos
+- Update status using buttons:
+  - provider_en_route
+  - arrived
+  - diagnosing
+  - quote_pending
+  - in_progress
+  - completed
+- Submit quote
+- Add notes
+
+ADMIN FEATURES
+Build these screens and flows:
+
+1. Admin Dashboard
+- Total users
+- Total providers
+- Pending provider verifications
+- Active bookings
+- Disputes count
+
+2. Provider Verification Queue
+- View provider documents
+- Approve or reject provider
+- Mark provider verified
+
+3. Booking Oversight
+- View all bookings
+- Filter by status
+- Open booking detail
+
+4. Dispute Center
+- View disputes
+- Add resolution notes
+- Mark resolved
+
+MATCHING LOGIC
+Implement simple matching logic:
+- Provider must be verified
+- Provider must be available
+- Provider must offer that category
+- Provider must be within service radius if coordinates exist
+- Rank providers by:
+  1. distance if available
+  2. rating
+  3. jobs completed
+If live geo distance is not fully available yet, use mock ranking with clear code comments for later map upgrade.
+
+PAYMENTS
+Implement Stripe-ready payment architecture:
+- Create payment records
+- Support deposit / callout fee structure
+- Use test mode compatible placeholders if Stripe keys are not provided
+- Structure the code so Stripe checkout/payment intent can be added easily
+- Payment status values:
+  - pending
+  - authorized
+  - paid
+  - refunded
+  - failed
+
+DESIGN DIRECTION
+Brand name: UrgentFix
+
+Design the UI as:
+- modern
+- trustworthy
+- fast-response feeling
+- local service startup style
+- clean cards
+- strong CTA buttons
+- simple iconography
+- white/neutral base with high-contrast action color
+- mobile-first responsive layouts
+
+SUGGESTED PAGES
+Public:
+- Home
+- Sign in
+- Sign up
+
+Customer:
+- Dashboard
+- New booking
+- Booking detail
+- History
+- Profile
+
+Provider:
+- Dashboard
+- Onboarding
+- Job detail
+- Availability/settings
+- Verification status
+
+Admin:
+- Dashboard
+- Providers
+- Provider detail
+- Bookings
+- Disputes
+
+HOME PAGE CONTENT
+Create a simple but real homepage for UrgentFix:
+- Hero section with headline
+- Subheadline explaining emergency repair booking
+- CTA buttons for “Get Help Now” and “Join as Provider”
+- Service category cards
+- “How it works” 3-step section
+- Trust section for verified professionals
+- Footer
+
+Suggested hero headline:
+“Emergency home repair, booked fast.”
+
+Suggested subheadline:
+“Find trusted local plumbers, electricians, locksmiths, and heating engineers when you need urgent help.”
+
+SEED DATA
+Add seed/demo data for:
+- 1 admin
+- 4 providers, one per category
+- several customer accounts
+- several bookings in mixed statuses
+This is important so the app looks real immediately after launch.
+
+TECHNICAL REQUIREMENTS
+- Use TypeScript
+- Use Prisma schema
+- Use environment variables for secrets
+- Create reusable UI components
+- Add loading states
+- Add empty states
+- Add error states
+- Add basic server-side validation
+- Add clean route/file organization
+- Add README with setup instructions
+- Add .env.example
+- Add seed script
+- Add clear comments where future integrations belong
+
+PROJECT STRUCTURE
+Use a clean structure like:
+- /client
+- /server
+- /shared
+or another well-organized Replit-friendly structure
+
+FINAL DELIVERABLE EXPECTATIONS
+I want a working MVP in Replit with:
+- full project structure
+- database schema
+- auth
+- role-based dashboards
+- booking flow
+- provider acceptance flow
+- admin management flow
+- responsive UI
+- seed data
+- setup instructions
+
+DO NOT
+- do not build food delivery features
+- do not build chatbots
+- do not add AI diagnosis
+- do not add unnecessary animations
+- do not overengineer microservices
+- do not leave the app as static mock screens only
+
+BUILD PRIORITY ORDER
+1. Auth and roles
+2. Database schema
+3. Customer booking flow
+4. Provider job acceptance/update flow
+5. Admin verification flow
+6. Booking detail/status timeline
+7. Payment structure
+8. Polished responsive UI
+
+After building the app, also provide:
+1. A short README
+2. Setup steps
+3. Seed/demo login credentials
+4. A list of next upgrades for V2
