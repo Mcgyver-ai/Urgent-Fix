@@ -25,7 +25,7 @@ export interface IStorage {
   getProvider(userId: string): Promise<Provider | undefined>;
   getProviderById(id: number): Promise<Provider | undefined>;
   createProvider(data: InsertProvider): Promise<Provider>;
-  updateProvider(id: number, data: Partial<InsertProvider>): Promise<Provider>;
+  updateProvider(id: number, data: Partial<Omit<Provider, 'id'>>): Promise<Provider>;
   getAllProviders(): Promise<Provider[]>;
   getVerifiedProviders(): Promise<Provider[]>;
   getAvailableProviders(categoryId: number): Promise<(Provider & { services: ProviderService[] })[]>;
@@ -135,7 +135,7 @@ export class DatabaseStorage implements IStorage {
     return provider;
   }
 
-  async updateProvider(id: number, data: Partial<InsertProvider>): Promise<Provider> {
+  async updateProvider(id: number, data: Partial<Omit<Provider, 'id'>>): Promise<Provider> {
     const [provider] = await db
       .update(providers)
       .set({ ...data, updatedAt: new Date() })

@@ -121,7 +121,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   });
 
   // Available providers for a category
-  app.get("/api/providers/available/:categoryId", isAuthenticated, async (req, res) => {
+  app.get("/api/providers/available/:categoryId", isAuthenticated, async (req: any, res) => {
     try {
       const categoryId = parseInt(req.params.categoryId);
       const providers = await storage.getAvailableProviders(categoryId);
@@ -441,7 +441,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/notifications/:id/read", isAuthenticated, async (req, res) => {
+  app.patch("/api/notifications/:id/read", isAuthenticated, async (req: any, res) => {
     try {
       await storage.markNotificationRead(parseInt(req.params.id));
       res.json({ success: true });
@@ -482,7 +482,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/admin/providers/:id/verify", isAuthenticated, requireAdmin, async (req, res) => {
+  app.patch("/api/admin/providers/:id/verify", isAuthenticated, requireAdmin, async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
       const { isVerified } = req.body;
@@ -493,7 +493,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/admin/documents/:id/status", isAuthenticated, requireAdmin, async (req, res) => {
+  app.patch("/api/admin/documents/:id/status", isAuthenticated, requireAdmin, async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
       const { status } = req.body;
@@ -531,7 +531,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
     }
   });
 
-  app.patch("/api/admin/disputes/:id", isAuthenticated, requireAdmin, async (req, res) => {
+  app.patch("/api/admin/disputes/:id", isAuthenticated, requireAdmin, async (req: any, res) => {
     try {
       const id = parseInt(req.params.id);
       const { status, resolutionNotes } = req.body;

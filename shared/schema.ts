@@ -205,14 +205,14 @@ export const serviceCategoriesRelations = relations(serviceCategories, ({ many }
 }));
 
 // Insert schemas
-export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertProviderSchema = createInsertSchema(providers).omit({ id: true, createdAt: true, updatedAt: true, ratingAverage: true, jobsCompleted: true });
-export const insertBookingSchema = createInsertSchema(bookings).omit({ id: true, createdAt: true, updatedAt: true, acceptedAt: true, arrivedAt: true, completedAt: true });
-export const insertAddressSchema = createInsertSchema(addresses).omit({ id: true, createdAt: true });
-export const insertQuoteSchema = createInsertSchema(quotes).omit({ id: true, createdAt: true });
-export const insertReviewSchema = createInsertSchema(reviews).omit({ id: true, createdAt: true });
-export const insertDisputeSchema = createInsertSchema(disputes).omit({ id: true, createdAt: true, updatedAt: true });
-export const insertNotificationSchema = createInsertSchema(notifications).omit({ id: true, createdAt: true });
+export const insertUserProfileSchema = createInsertSchema(userProfiles).omit({ createdAt: true, updatedAt: true });
+export const insertProviderSchema = createInsertSchema(providers).omit({ createdAt: true, updatedAt: true, ratingAverage: true, jobsCompleted: true });
+export const insertBookingSchema = createInsertSchema(bookings).omit({ createdAt: true, updatedAt: true, acceptedAt: true, arrivedAt: true, completedAt: true });
+export const insertAddressSchema = createInsertSchema(addresses).omit({ createdAt: true });
+export const insertQuoteSchema = createInsertSchema(quotes).omit({ createdAt: true });
+export const insertReviewSchema = createInsertSchema(reviews).omit({ createdAt: true });
+export const insertDisputeSchema = createInsertSchema(disputes).omit({ createdAt: true, updatedAt: true });
+export const insertNotificationSchema = createInsertSchema(notifications).omit({ createdAt: true });
 
 // Types
 export type ServiceCategory = typeof serviceCategories.$inferSelect;
